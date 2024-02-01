@@ -13,6 +13,11 @@ module type File_interactions_sig = sig
   val write_file:string -> string list -> unit
 end;;
 
+(*module that populates a file with random characters on each line*)
+module type File_populator = sig
+  val random_text_generator:unit 
+end;;
+
 (*module that handles basic stream functions*)
 module Stream_manipulation:Stream_manipulation_sig= struct
     open Basic_stream_functions
@@ -56,3 +61,35 @@ module File_interactions:File_interactions_sig = struct
   in
     aux_write_file list; close_out ic
 end;;
+
+module Generator:File_populator = struct
+  (*util module for Generator*)
+  module Generator_util = struct
+    let array_of_available_chars : char list= 
+    Basic_stream_functions.concat
+    ['1';'2';'3';'4';'5';'6';'7';'8';'9';'0']
+    (Basic_stream_functions.concat 
+      (Basic_stream_functions.map 
+        ['a';'b';'c';'d';'e';'f';'g';'h';'i';'j';'k';'l';
+        'm';'n';'o';'p';'q';'r';'s';'t';'u';'v';'w';'x';'y';'z'] 
+        (fun x -> Char.uppercase_ascii x))
+      (['a';'b';'c';'d';'e';'f';'g';'h';'i';'j';'k';'l';
+        'm';'n';'o';'p';'q';'r';'s';'t';'u';'v';'w';'x';'y';'z']))
+    
+    let generate_random_string = 
+      let rec generator list int = match int with 
+      |0 -> list 
+      |_ -> [Basic_stream_functions.nth_element array_of_available_chars 
+      (Random.int (List.length array_of_available_chars - 1))] @ generator list (int - 1)
+    in
+      let random_char_list = generator [] 10 
+    in
+      let rec construct_string (list:char list) acc = match list with
+        |[] -> acc 
+        |x::xs -> acc^Char.escaped x ^ construct_string xs acc 
+    in
+      construct_string random_char_list ""
+  end;;
+  let random_text_generator = print_endline Generator_util.generate_random_string
+end;;
+

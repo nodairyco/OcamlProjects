@@ -86,3 +86,13 @@ let rec inner_loop in_list in_num control_num = match in_num with
     in 
   inner_loop list y n 
 ;;
+
+(*finds the first matching element in the list and returns it*)
+let rec find_match (list:'a list) (match_function:'a -> bool) = match list with 
+  |[] -> None
+  |x::xs -> 
+    if match_function x then
+      Some x
+    else
+      find_match xs match_function
+    ;;

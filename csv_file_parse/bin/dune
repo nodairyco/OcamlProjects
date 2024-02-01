@@ -4,4 +4,4 @@
  (flags
   (:standard -w -33-27-8-32))
  (modules Main Stream_manipulation Basic_stream_functions)
- (libraries csv_file_parse))
+ (libraries csv_file_parse csv))
