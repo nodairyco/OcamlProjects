@@ -15,7 +15,7 @@ end;;
 
 (*module that populates a file with random characters on each line*)
 module type File_populator = sig
-  val random_text_generator:unit 
+  val random_text_generator:string -> unit 
 end;;
 
 (*module that handles basic stream functions*)
@@ -79,17 +79,18 @@ module Generator:File_populator = struct
     let generate_random_string = 
       let rec generator list int = match int with 
       |0 -> list 
-      |_ -> [Basic_stream_functions.nth_element array_of_available_chars 
-      (Random.int (List.length array_of_available_chars - 1))] @ generator list (int - 1)
-    in
-      let random_char_list = generator [] 10 
+      |_ -> Basic_stream_functions.nth_element array_of_available_chars 
+      (Random.int (List.length array_of_available_chars - 1)) :: generator list (int - 1)
     in
       let rec construct_string (list:char list) acc = match list with
         |[] -> acc 
-        |x::xs -> acc^Char.escaped x ^ construct_string xs acc 
+        |x::xs -> construct_string xs (acc^Char.escaped x)
     in
-      construct_string random_char_list ""
+      Basic_stream_functions.generate_stream (fun () -> construct_string (generator [] (Random.int 90)) "") 200 
   end;;
-  let random_text_generator = print_endline Generator_util.generate_random_string
+  let random_text_generator =  
+    let list =  Generator_util.generate_random_string 
+  in 
+  fun (y:string) -> File_interactions.write_file y list
 end;;
 

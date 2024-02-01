@@ -95,4 +95,9 @@ let rec find_match (list:'a list) (match_function:'a -> bool) = match list with
       Some x
     else
       find_match xs match_function
-    ;;
+;;
+
+let rec generate_stream (generator_function:unit -> 'a) (length:int)= match length with 
+0 -> []
+|_ -> generator_function () :: generate_stream generator_function (length -1)
+;;
