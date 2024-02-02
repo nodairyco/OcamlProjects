@@ -97,7 +97,29 @@ let rec find_match (list:'a list) (match_function:'a -> bool) = match list with
       find_match xs match_function
 ;;
 
+(*generates a list with the given function*)
 let rec generate_stream (generator_function:unit -> 'a) (length:int)= match length with 
-0 -> []
-|_ -> generator_function () :: generate_stream generator_function (length -1)
+  0 -> []
+  |_ -> generator_function () :: generate_stream generator_function (length -1)
 ;;
+
+(*concatinates 2 lists in random order*)
+let rand_concat list1 list2 =
+  let shuffle lst = 
+    let nd = map lst (fun c -> (Random.bits (), c)) in 
+    let sond = List.sort compare nd in 
+    map sond snd 
+  in
+  let combined = list1 @ list2 in 
+  shuffle combined 
+;;
+
+(*flattens a list of lists into a single list*)
+let rec flatten list = match list with 
+[] -> [] 
+|x::xs -> 
+  let rec in_flatten in_list = match in_list with 
+  [] -> []
+  |y::ys -> y :: in_flatten ys 
+in
+in_flatten x @ flatten xs ;;

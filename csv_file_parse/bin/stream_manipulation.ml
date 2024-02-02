@@ -18,6 +18,11 @@ module type File_populator = sig
   val random_text_generator:string -> unit 
 end;;
 
+(*finally, a parser for a csv file*)
+module type Csv_parser = sig
+  val parse_csv_file : string -> string list 
+end
+
 (*module that handles basic stream functions*)
 module Stream_manipulation:Stream_manipulation_sig= struct
     open Basic_stream_functions
@@ -67,7 +72,7 @@ module Generator:File_populator = struct
   module Generator_util = struct
     let array_of_available_chars : char list= 
     Basic_stream_functions.concat
-    ['1';'2';'3';'4';'5';'6';'7';'8';'9';'0']
+    ['1';'2';'3';'4';'5';'6';'7';'8';'9';'0';',']
     (Basic_stream_functions.concat 
       (Basic_stream_functions.map 
         ['a';'b';'c';'d';'e';'f';'g';'h';'i';'j';'k';'l';
@@ -94,3 +99,14 @@ module Generator:File_populator = struct
   fun (y:string) -> File_interactions.write_file y list
 end;;
 
+
+module Csv_parser:Csv_parser = struct
+  module Csv_util = struct
+    open File_interactions
+    open Basic_stream_functions
+    let parse_it file = 
+      let file_list = read_file file in 
+      flatten (map file_list (fun y -> String.split_on_char ',' y)) 
+  end   
+  let parse_csv_file (input:string) = Csv_util.parse_it input
+end
