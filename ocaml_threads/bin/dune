@@ -1,0 +1,7 @@
+(executable
+ (public_name ocaml_threads)
+ (name main)
+ (flags
+  (:standard -w -32-33-26))
+ (modules Main Cell Lock Deadlock Sema Queue Selectivecom)
+ (libraries ocaml_threads threads))
