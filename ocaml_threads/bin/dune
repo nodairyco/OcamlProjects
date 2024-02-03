@@ -3,5 +3,5 @@
  (name main)
  (flags
   (:standard -w -32-33-26))
- (modules Main Cell Lock Deadlock Sema Queue Selectivecom)
+ (modules Main Cell Lock Deadlock Sema Queue)
  (libraries ocaml_threads threads))
